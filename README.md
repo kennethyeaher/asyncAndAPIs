@@ -146,7 +146,19 @@ The suite now contains 32 tests: 26 browser tests and six independent model and 
 | Interface         | Keyboard activation, live status attributes, reduced motion, and no horizontal overflow at 320, 375, 768, and 1440 pixels |
 | Basic fallback    | A visible JavaScript notice and a working link to the JSON file with scripting disabled                                   |
 
-The screenshots above are actual browser captures at 1440 and 375 pixels. Browser interception supplies the failure cases; it does not establish behavior under every real network condition. Automated checks do not establish full accessibility conformance. Safari, Firefox, spoken VoiceOver, and physical mobile devices have not been tested.
+The screenshots above are actual browser captures at 1440 and 375 pixels. Browser interception supplies the failure cases; it does not establish behavior under every real network condition. Automated checks do not establish full accessibility conformance.
+
+### Live browser checks
+
+Manual checks on the published guide were completed on October 11, 2026:
+
+| Environment         | Result                       | Observed behavior                                                                                                                                                                                                                                                                |
+| ------------------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Safari 27.0.1       | PASS                         | Initial disabled controls, eight loaded cards, five affordable results, eight names, normalized Pho Corner lookup, ramen search, missing file error, cleared results, disabled data actions, and successful retry                                                                |
+| Firefox 156.0       | PASS                         | The same core loading, array method, search, failure, and retry workflow                                                                                                                                                                                                         |
+| VoiceOver in Safari | PASS for the listening check | With VoiceOver enabled, Tab focused the failure button and Space activated it. A live listener confirmed that the button name, file unavailable error, and eight restaurants loaded message after retry were clearly spoken. VoiceOver was restored to its original off setting. |
+
+These are scoped manual checks, not the complete automated suite repeated in each browser. VoiceOver rotor navigation, a complete screen reader task flow, delayed loading announcements, and physical mobile devices remain unverified.
 
 <details>
 <summary><strong>Manual failure check</strong></summary>
