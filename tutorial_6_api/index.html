@@ -1,77 +1,203 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Explore eight sample restaurants with async data loading, affordable picks, and quick name lookup. An INST630 JavaScript exercise.">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Explore eight sample restaurants with async data loading, affordable picks, and quick name lookup. An INST630 JavaScript exercise."
+    />
     <title>Table finder | Restaurant guide</title>
-    <link rel="icon" href="data:,">
-    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="style.css" />
     <script src="script.js" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#directory">Skip to restaurants</a>
     <div class="container">
       <header class="masthead">
-        <a href="./" class="brand"><span class="brand-mark" aria-hidden="true">tf.</span> Table finder</a>
-        <span class="course-label">INST630 <span aria-hidden="true">/</span> Week 6</span>
+        <a href="./" class="brand"
+          ><span class="brand-mark" aria-hidden="true">tf.</span> Table
+          finder</a
+        >
+        <span class="course-label"
+          >INST630 <span aria-hidden="true">/</span> Week 6</span
+        >
       </header>
       <main>
         <section class="intro" aria-labelledby="page-title">
           <div class="intro-copy">
             <p class="eyebrow">The sample restaurant guide</p>
-            <h1 id="page-title">Find your<br>next <em>table.</em></h1>
-            <p class="intro-description">A quick look at the neighborhood, the menu, and what fits your budget. Load the guide to start exploring.</p>
-            <p class="sample-note">Course sample data. These are fictional listings, not current restaurant recommendations.</p>
+            <h1 id="page-title">Find your<br />next <em>table.</em></h1>
+            <p class="intro-description">
+              A quick look at the neighborhood, the menu, and what fits your
+              budget. Load the guide to start exploring.
+            </p>
+            <p class="sample-note">
+              Course sample data. These are fictional listings, not current
+              restaurant recommendations.
+            </p>
           </div>
           <div class="request-card">
-            <div class="request-heading"><span class="eyebrow">Your directory</span><span aria-hidden="true">↗</span></div>
-            <div id="loading-status" class="status-display ready" role="status" aria-live="polite" aria-atomic="true">
+            <div class="request-heading">
+              <span class="eyebrow">Your directory</span
+              ><span aria-hidden="true">↗</span>
+            </div>
+            <div
+              id="loading-status"
+              class="status-display ready"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            >
               <span class="status-marker" aria-hidden="true"></span>
               <p class="status-message">Ready when you are.</p>
             </div>
-            <p class="request-hint">Load once, then browse without making another request.</p>
-            <button id="load-data-button" class="load-button" type="button">Load restaurants</button>
-            <div class="request-source"><span>Source</span><a href="restaurants.json">restaurants.json</a></div>
+            <p class="request-hint">
+              Load once, then browse without making another request.
+            </p>
+            <button id="load-data-button" class="load-button" type="button">
+              Load restaurants
+            </button>
+            <div class="request-source">
+              <span>Source</span><a href="restaurants.json">restaurants.json</a>
+            </div>
           </div>
         </section>
 
-        <noscript><p class="notice">JavaScript is needed to load this guide. You can still <a href="restaurants.json">open the restaurant data</a>.</p></noscript>
+        <noscript
+          ><p class="notice">
+            JavaScript is needed to load this guide. You can still
+            <a href="restaurants.json">open the restaurant data</a>.
+          </p></noscript
+        >
 
-        <section id="directory" class="directory" aria-labelledby="directory-title" aria-busy="false">
-          <div class="section-heading"><div><p class="eyebrow">A place for every appetite</p><h2 id="directory-title">The directory</h2></div><p id="result-count" role="status" aria-live="polite">No data loaded</p></div>
-          <div class="toolbar" role="group" aria-label="Restaurant views">
-            <button id="display-button" type="button" class="view-button" aria-pressed="true" disabled>All restaurants</button>
-            <button id="filter-button" type="button" class="view-button" aria-pressed="false" disabled>Affordable · $ / $$</button>
-            <button id="map-button" type="button" class="view-button" aria-pressed="false" disabled>Names only</button>
+        <section
+          id="directory"
+          class="directory"
+          aria-labelledby="directory-title"
+          aria-busy="false"
+        >
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">A place for every appetite</p>
+              <h2 id="directory-title">The directory</h2>
+            </div>
+            <p id="result-count" role="status" aria-live="polite">
+              No data loaded
+            </p>
           </div>
-          <p id="view-description" class="view-description">The views become available after the guide loads.</p>
-          <div id="restaurant-list" class="restaurant-grid"><div class="empty-state"><span class="empty-symbol" aria-hidden="true">↗</span><h3>Your next table starts here.</h3><p>Choose “Load restaurants” to open the sample guide.</p></div></div>
+          <div class="toolbar" role="group" aria-label="Restaurant views">
+            <button
+              id="display-button"
+              type="button"
+              class="view-button"
+              aria-pressed="true"
+              disabled
+            >
+              All restaurants
+            </button>
+            <button
+              id="filter-button"
+              type="button"
+              class="view-button"
+              aria-pressed="false"
+              disabled
+            >
+              Affordable · $ / $$
+            </button>
+            <button
+              id="map-button"
+              type="button"
+              class="view-button"
+              aria-pressed="false"
+              disabled
+            >
+              Names only
+            </button>
+          </div>
+          <p id="view-description" class="view-description">
+            The views become available after the guide loads.
+          </p>
+          <div id="restaurant-list" class="restaurant-grid">
+            <div class="empty-state">
+              <span class="empty-symbol" aria-hidden="true">↗</span>
+              <h3>Your next table starts here.</h3>
+              <p>Choose “Load restaurants” to open the sample guide.</p>
+            </div>
+          </div>
         </section>
 
         <section class="lookup" aria-labelledby="lookup-title">
-          <div><p class="eyebrow">Have a place in mind?</p><h2 id="lookup-title">Find it by name.</h2><p>Look up one restaurant with its full name. Capitalization does not matter.</p></div>
+          <div>
+            <p class="eyebrow">Have a place in mind?</p>
+            <h2 id="lookup-title">Find it by name.</h2>
+            <p>
+              Look up one restaurant with its full name. Capitalization does not
+              matter.
+            </p>
+          </div>
           <div>
             <form id="find-form">
               <label for="restaurant-name">Restaurant name</label>
-              <div class="find-controls"><input id="restaurant-name" name="restaurant" type="text" placeholder="e.g. Pho Corner" maxlength="120" required disabled><button id="find-button" type="submit" disabled>Find restaurant</button></div>
+              <div class="find-controls">
+                <input
+                  id="restaurant-name"
+                  name="restaurant"
+                  type="text"
+                  placeholder="e.g. Pho Corner"
+                  maxlength="120"
+                  required
+                  disabled
+                /><button id="find-button" type="submit" disabled>
+                  Find restaurant
+                </button>
+              </div>
             </form>
-            <div id="found-restaurant" class="find-result" role="status" aria-live="polite">Load the guide to use name lookup.</div>
+            <div
+              id="found-restaurant"
+              class="find-result"
+              role="status"
+              aria-live="polite"
+            >
+              Load the guide to use name lookup.
+            </div>
           </div>
         </section>
 
         <details class="testing-panel">
-          <summary>Behind the guide <span>Async workflow &amp; error recovery</span></summary>
+          <summary>
+            Behind the guide <span>Async workflow &amp; error recovery</span>
+          </summary>
           <div class="testing-content">
             <h2>Try the recovery flow</h2>
-            <p>This exercise loads a JSON file with <code>fetch()</code> and <code>async/await</code>. The loaded array powers <code>forEach</code>, <code>filter</code>, <code>map</code>, and <code>find</code>.</p>
-            <p>The button below requests a missing file through the same loading workflow. It clears the current results and disables browsing. Use the retry button above to load the correct file again.</p>
-            <button id="error-button" class="secondary-button" type="button">Test a failed request</button>
-            <p>For a real network failure, block <code>restaurants.json</code> in browser developer tools, then reload the guide. Remove the block before retrying.</p>
+            <p>
+              This exercise loads a JSON file with <code>fetch()</code> and
+              <code>async/await</code>. The loaded array powers
+              <code>forEach</code>, <code>filter</code>, <code>map</code>, and
+              <code>find</code>.
+            </p>
+            <p>
+              The button below requests a missing file through the same loading
+              workflow. It clears the current results and disables browsing. Use
+              the retry button above to load the correct file again.
+            </p>
+            <button id="error-button" class="secondary-button" type="button">
+              Test a failed request
+            </button>
+            <p>
+              For a real network failure, block <code>restaurants.json</code> in
+              browser developer tools, then reload the guide. Remove the block
+              before retrying.
+            </p>
           </div>
         </details>
       </main>
-      <footer><span>Table finder <span aria-hidden="true">·</span> Kenneth Yeaher</span><span>Built with HTML, CSS &amp; JavaScript</span></footer>
+      <footer>
+        <span
+          >Table finder <span aria-hidden="true">·</span> Kenneth Yeaher</span
+        ><span>Built with HTML, CSS &amp; JavaScript</span>
+      </footer>
     </div>
   </body>
 </html>

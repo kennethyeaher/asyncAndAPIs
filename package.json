@@ -1,0 +1,21 @@
+{
+  "name": "async-and-apis",
+  "version": "1.0.0",
+  "private": true,
+  "description": "An async restaurant directory for INST630 Tutorial 6",
+  "scripts": {
+    "test": "node --test tests/*.test.cjs",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run lint && npm run format:check && node --check tutorial_6_api/script.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "eslint": "10.12.0",
+    "playwright": "1.62.1",
+    "prettier": "3.9.10"
+  }
+}
