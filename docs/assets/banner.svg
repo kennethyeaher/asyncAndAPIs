@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title description">
+  <title id="title">Table finder</title>
+  <desc id="description">A restaurant guide built around async loading, clear feedback, and four array methods.</desc>
+  <rect width="1200" height="360" rx="20" fill="#edf2ff"/>
+  <circle cx="74" cy="63" r="24" fill="#254dba"/>
+  <text x="74" y="71" text-anchor="middle" font-family="Georgia,serif" font-size="25" font-weight="bold" fill="white">tf.</text>
+  <text x="111" y="69" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="#172b48">INST630 / WEEK 6</text>
+  <text x="50" y="190" font-family="Arial,sans-serif" font-size="82" font-weight="bold" letter-spacing="-5" fill="#172b48">Table finder.</text>
+  <text x="53" y="244" font-family="Arial,sans-serif" font-size="22" fill="#536479">Load the guide. Find your next table.</text>
+  <text x="53" y="306" font-family="Arial,sans-serif" font-size="13" letter-spacing="2" fill="#254dba">ASYNC / AWAIT / ARRAYS</text>
+  <g transform="translate(838 45)">
+    <rect width="310" height="268" rx="12" fill="#fbfcff" stroke="#c6d2f1"/>
+    <text x="24" y="38" font-family="Arial,sans-serif" font-size="11" font-weight="bold" letter-spacing="2" fill="#172b48">THE LOADING WORKFLOW</text>
+    <path d="M24 57H286" stroke="#d5ddeb"/>
+    <g font-family="Arial,sans-serif" font-size="17" fill="#172b48">
+      <text x="24" y="95">01</text><text x="68" y="95">Request the file</text>
+      <text x="24" y="137">02</text><text x="68" y="137">Validate the records</text>
+      <text x="24" y="179">03</text><text x="68" y="179">Enable the guide</text>
+    </g>
+    <rect x="24" y="210" width="262" height="34" rx="6" fill="#254dba"/>
+    <text x="155" y="232" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="bold" fill="white">Clear feedback at every step</text>
+  </g>
+</svg>
