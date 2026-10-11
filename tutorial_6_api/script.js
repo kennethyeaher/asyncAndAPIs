@@ -79,3 +79,52 @@ async function loadData(url = 'restaurants.json') {
 // Native controls keep the loading action available without inline handlers.
 document.getElementById('load-data-button').addEventListener('click', () => loadData());
 document.getElementById('error-button').addEventListener('click', () => loadData('nonexistent-file.json'));
+
+/** Create a safe text element from its tag, content, and optional class. Returns an element. */
+function createTextElement(tag, text, className = '') {
+  const element = document.createElement(tag);
+  element.textContent = text;
+  element.className = className;
+  return element;
+}
+
+/** Render a record array into a target element using forEach. Returns nothing. */
+function renderRestaurants(records, target) {
+  target.replaceChildren();
+  records.forEach(restaurant => {
+    const card = createTextElement('article', '', 'restaurant-card');
+    card.append(
+      createTextElement('p', restaurant.cuisine, 'cuisine'),
+      createTextElement('h3', restaurant.name),
+      createTextElement('p', `${restaurant.neighborhood} · ${restaurant.priceRange} · ${restaurant.rating.toFixed(1)} / 5`),
+      createTextElement('p', `${restaurant.hours} · ${restaurant.specialties.join(', ')}`),
+      createTextElement('p', restaurant.phoneNumber),
+    );
+    target.append(card);
+  });
+  if (!records.length) target.append(createTextElement('p', 'No matching restaurants. Try another view.', 'placeholder'));
+}
+
+/** Display every loaded restaurant with forEach. Returns nothing. */
+function displayAllRestaurants() {
+  renderRestaurants(restaurants, document.getElementById('restaurant-list'));
+}
+
+/** Filter loaded restaurants at one or two dollar signs. Returns nothing. */
+function displayAffordableRestaurants() {
+  const affordableRestaurants = restaurants.filter(restaurant => restaurant.priceRange.length <= 2);
+  renderRestaurants(affordableRestaurants, document.getElementById('filtered-list'));
+}
+
+/** Transform loaded records into names with map. Returns nothing. */
+function displayRestaurantNames() {
+  const names = restaurants.map(restaurant => restaurant.name);
+  const list = document.getElementById('mapped-list');
+  list.replaceChildren();
+  names.forEach(name => list.append(createTextElement('p', name)));
+}
+
+// All array operations read the records produced by the async request.
+document.getElementById('display-button').addEventListener('click', displayAllRestaurants);
+document.getElementById('filter-button').addEventListener('click', displayAffordableRestaurants);
+document.getElementById('map-button').addEventListener('click', displayRestaurantNames);
