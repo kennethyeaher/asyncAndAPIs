@@ -98,7 +98,7 @@ python3 -m http.server 8000
 
 Open **[localhost:8000/tutorial_6_api/](http://localhost:8000/tutorial_6_api/)**. VS Code Live Server is another option. No installation or build is needed to use the interface.
 
-For development checks, use Node.js 22 or newer:
+For development checks, use Node.js 22.13 or later in the 22 release line, or Node.js 24 or newer:
 
 ```sh
 npm ci

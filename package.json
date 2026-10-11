@@ -11,7 +11,7 @@
     "check": "npm run lint && npm run format:check && node --check tutorial_6_api/script.js"
   },
   "engines": {
-    "node": ">=22"
+    "node": "^22.13.0 || >=24"
   },
   "devDependencies": {
     "eslint": "10.12.0",
