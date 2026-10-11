@@ -4,7 +4,7 @@
 
 <p align="center">
   <strong>An async JavaScript exercise with a complete request and recovery flow.</strong><br>
-  Browse eight sample restaurants, narrow the list by price, or find a place by name.
+  Explore eight sample restaurants with combined filters, sorting, and a personal shortlist.
 </p>
 
 <p align="center">
@@ -28,7 +28,7 @@
 
 ## The interaction
 
-An INST630 Week 6 project built from the supplied `tutorial_6_api` starter. The exercise moves restaurant records out of JavaScript and into a JSON file requested over HTTP. The interface shows what is happening while that request runs, enables browsing after validation, and offers a retry when loading fails.
+An INST630 Week 6 project built from the supplied `tutorial_6_api` starter. The exercise moves restaurant records out of JavaScript and into a JSON file requested over HTTP. The interface shows what is happening while that request runs, enables browsing after validation, and offers a retry when loading fails. The extended guide adds a complete discovery flow: search across names and dishes, combine cuisine and neighborhood filters, sort the results, and keep a favorite shortlist.
 
 <img src="docs/assets/preview-desktop.png" alt="Desktop Table finder interface with eight loaded restaurant cards, three browsing views, and a name lookup form." width="100%">
 
@@ -39,7 +39,20 @@ An INST630 Week 6 project built from the supplied `tutorial_6_api` starter. The 
 <img src="docs/assets/preview-error.png" alt="Failed request state with a message, retry button, disabled browsing, and cleared results." width="100%">
 </details>
 
-**The data is a course fixture.** These eight listings, ratings, prices, hours, and phone numbers are sample content from the starter, not current restaurant information. The page requests its own `restaurants.json`; it does not call a commercial restaurant API, store searches, or send them to another service.
+**The data is a course fixture.** These eight listings, ratings, prices, hours, and phone numbers are sample content from the starter, not current restaurant information. The page requests its own `restaurants.json`; it does not call a commercial restaurant API or send searches or favorites to another service. Searches are not persisted. Favorites stay in the current tab by default; the optional Remember favorites checkbox stores a versioned list of restaurant IDs in this browser. Turning it off removes that saved record when storage is available.
+
+## Beyond the brief
+
+| Extension                   | User behavior                                                                           | Engineering decision                                                                                                         |
+| --------------------------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **Combined discovery**      | Search names, cuisines, neighborhoods, and dishes; narrow results with multiple filters | A pure selection function composes filters against the fetched array, with normalized text for accents and capitalization    |
+| **Predictable sorting**     | Order cards and names by rating, price range, name, or the original guide order         | Sorting works on a new array, preserves source order, and uses explicit tie rules                                            |
+| **Favorite shortlist**      | Save a place from its card or lookup result, then browse Favorites                      | Shared favorite IDs keep both surfaces synchronized; keyboard focus is restored when a saved card disappears                 |
+| **Optional persistence**    | Choose whether favorites should survive a reload                                        | Saving is off by default; version checks reject corrupt data, and blocked storage falls back to tab memory                   |
+| **Reset with Undo**         | Clear filters and restore the previous query, view, and sort                            | One state snapshot is recoverable until the next filter or view change or data request                                       |
+| **Independent model tests** | Keep the discovery logic verifiable without rendering the page                          | Browser modules separate data selection and storage from DOM updates; tests check fixed expectations and source immutability |
+
+These extensions stay within the original HTML, CSS, and JavaScript approach. There is no framework, build step, account system, or runtime dependency.
 
 ## A short walkthrough
 
@@ -49,25 +62,28 @@ An INST630 Week 6 project built from the supplied `tutorial_6_api` starter. The 
 4. Enter **Pho Corner** in the name lookup. Matching ignores capitalization and surrounding spaces.
 5. Expand **Behind the guide** and choose **Test a failed request**. The missing file produces an error through the same workflow, clears results, and disables browsing.
 6. Choose **Retry loading restaurants** to recover using the correct JSON file.
+7. Search for **ramen**, combine cuisine and neighborhood choices, or sort by **Highest rated**. Filters apply to each view, including Names only and Favorites.
+8. Save **Pho Corner**, then open **Favorites**. Enable **Remember favorites in this browser** only if you want that shortlist restored on your next visit.
+9. Choose **Reset filters**, then **Undo reset**. Your previous query, view, and sorting return.
 
 ## Class requirements
 
-| Requirement                                         | Implementation                                                                                                        | Visible result                                                                 |
-| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Load external JSON with `fetch()` and `async/await` | `loadData()` defaults to `restaurants.json`, awaits the response, checks `response.ok`, then awaits `response.json()` | Eight records arrive through an HTTP request                                   |
-| Loading state                                       | `updateStatus()`, `toggleMethodButtons()`, `isLoading`, and `aria-busy`                                               | Status text and a spinner appear; duplicate requests and browsing are disabled |
-| `forEach`                                           | `renderRestaurants()` creates safe DOM elements for each record                                                       | Restaurant cards with cuisine, price, rating, hours, and phone number          |
-| `filter`                                            | `displayAffordableRestaurants()` keeps price ranges of `$` or `$$`                                                    | Five affordable restaurants from the supplied fixture                          |
-| `map`                                               | `displayRestaurantNames()` transforms the loaded array into strings                                                   | An ordered list of restaurant names                                            |
-| `find`                                              | `findRestaurant()` looks up one record by normalized full name                                                        | A matching card or guidance for a missing name                                 |
-| Error recovery                                      | `try/catch/finally`, a retry action, and a ten second abort timeout                                                   | Errors remain beside the loading control; retry requests the correct file      |
-| Enable and disable appropriately                    | Controls depend on validated, nonempty records                                                                        | Failed, pending, and empty requests leave data actions disabled                |
+| Requirement                                         | Implementation                                                                                                                | Visible result                                                                 |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Load external JSON with `fetch()` and `async/await` | `loadData()` defaults to `restaurants.json`, awaits the response, checks `response.ok`, then awaits `response.json()`         | Eight records arrive through an HTTP request                                   |
+| Loading state                                       | `updateStatus()`, `toggleMethodButtons()`, `isLoading`, and `aria-busy`                                                       | Status text and a spinner appear; duplicate requests and browsing are disabled |
+| `forEach`                                           | `renderRestaurants()` creates safe DOM elements for each record                                                               | Restaurant cards with cuisine, price, rating, hours, and phone number          |
+| `filter`                                            | `displayAffordableRestaurants()` selects the affordable view; `selectRestaurants()` uses `filter` to keep `$` or `$$` records | Five affordable restaurants from the supplied fixture                          |
+| `map`                                               | `displayRestaurantNames()` selects the name view; `renderDirectory()` uses `map` on matching loaded records                   | An ordered list of restaurant names                                            |
+| `find`                                              | `findRestaurant()` looks up one record by normalized full name                                                                | A matching card or guidance for a missing name                                 |
+| Error recovery                                      | `try/catch/finally`, a retry action, and a ten second abort timeout                                                           | Errors remain beside the loading control; retry requests the correct file      |
+| Enable and disable appropriately                    | Controls depend on validated, nonempty records                                                                                | Failed, pending, and empty requests leave data actions disabled                |
 
 The assignment asks for at least three array methods; the interface uses all four. These methods operate on fetched records rather than a duplicate array embedded in the script.
 
 ## How the async flow works
 
-`restaurants` holds the validated records and `isLoading` prevents overlapping requests. Both live at script scope so the named event handlers can share the current state. The response, parsed records, timeout, and abort controller stay local to `loadData()`; view functions use local variables for their filtered or transformed arrays.
+`restaurants` holds the validated records and `isLoading` prevents overlapping requests. Both live at module scope so the named event handlers can share the current state without exposing globals. Filter state, favorite IDs, and a single undo snapshot also remain in the interface module. The response, parsed records, timeout, and abort controller stay local to `loadData()`; the pure model uses local variables for its filtered and sorted arrays. The original loaded array is never sorted in place.
 
 ```text
 Ready
@@ -119,7 +135,7 @@ BROWSER_CHANNEL=chrome npm test
 
 ## Verification
 
-All 17 browser tests passed locally in Chrome and in GitHub Actions using Chromium. The workflow runs on pushes and pull requests; the badge links to its latest result. The published Pages interface was also checked for successful loading, all four array methods, failed request recovery, and the root redirect.
+The suite now contains 32 tests: 26 browser tests and six independent model and storage tests. All passed locally in Chrome; the hosted workflow runs the same suite with Chromium. The workflow runs on pushes and pull requests; the badge links to its latest result. The class criteria are retained in the original 17 browser tests; additional checks cover the extended discovery and shortlist flows.
 
 | Coverage          | Cases                                                                                                                     |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------- |
@@ -148,7 +164,7 @@ The built in failure button requests `nonexistent-file.json`, demonstrating an H
 
 ## Design decisions
 
-The guide uses a compact loading panel beside the introduction, followed by a restaurant directory and a separate lookup form. Blue identifies actions and cuisine labels. Restaurant names use a serif face; controls use the system sans serif stack. The cards group the fields needed to compare places without adding images or external services.
+The guide uses a compact loading panel beside the introduction, followed by a restaurant directory and a separate lookup form. Blue identifies actions and cuisine labels. Restaurant names use a serif face; controls use the system sans serif stack. The cards group the fields needed to compare places without adding images or external services. Search and filtering stay next to the result count. The shortlist adds a practical decision step, while optional saving and Undo make recovery explicit.
 
 Two patterns from _Designing Interfaces: Patterns for Effective Interaction Design_, 3rd edition, by Jenifer Tidwell, Charles Brewer, and Aynne Valencia support the interaction:
 
@@ -166,9 +182,12 @@ asyncAndAPIs/
 ├── tutorial_6_api/
 │   ├── index.html              # guide structure and native controls
 │   ├── style.css               # responsive layouts and request states
-│   ├── script.js               # async loading, validation, and array methods
+│   ├── script.js               # async workflow, interface state, and rendering
+│   ├── directory-model.js      # validation and pure record selection
+│   ├── favorites-store.js      # versioned browser storage operations
 │   └── restaurants.json        # supplied course fixture
-├── tests/restaurants.test.cjs   # browser behavior and failure checks
+├── tests/restaurants.test.cjs   # 26 browser behavior and failure checks
+├── tests/directory-model.test.cjs # six independent model and storage checks
 ├── docs/assets/                 # banner and actual interface screenshots
 ├── .github/workflows/           # browser checks and manual Pages deployment
 ├── eslint.config.mjs            # JavaScript lint rules
