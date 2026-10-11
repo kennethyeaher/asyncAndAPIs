@@ -10,7 +10,7 @@
     <title>Table finder | Restaurant guide</title>
     <link rel="icon" href="data:," />
     <link rel="stylesheet" href="style.css" />
-    <script src="script.js" defer></script>
+    <script src="script.js" type="module"></script>
   </head>
   <body>
     <a class="skip-link" href="#directory">Skip to restaurants</a>
@@ -115,6 +115,76 @@
             >
               Names only
             </button>
+            <button
+              id="favorites-button"
+              type="button"
+              class="view-button"
+              aria-pressed="false"
+              disabled
+            >
+              Favorites (0)
+            </button>
+          </div>
+          <div class="filter-panel">
+            <div class="search-field">
+              <label for="search-restaurants">Search the guide</label
+              ><input
+                id="search-restaurants"
+                type="search"
+                placeholder="Name, cuisine, neighborhood, or dish"
+                maxlength="120"
+                disabled
+              />
+            </div>
+            <div>
+              <label for="cuisine-filter">Cuisine</label
+              ><select id="cuisine-filter" disabled>
+                <option value="">All cuisines</option>
+              </select>
+            </div>
+            <div>
+              <label for="neighborhood-filter">Neighborhood</label
+              ><select id="neighborhood-filter" disabled>
+                <option value="">All neighborhoods</option>
+              </select>
+            </div>
+            <div>
+              <label for="sort-restaurants">Sort by</label
+              ><select id="sort-restaurants" disabled>
+                <option value="source">Guide order</option>
+                <option value="rating">Highest rated</option>
+                <option value="price">Lowest price</option>
+                <option value="name">Name A to Z</option>
+              </select>
+            </div>
+          </div>
+          <div class="filter-actions">
+            <button
+              id="reset-filters"
+              type="button"
+              class="text-button"
+              disabled
+            >
+              Reset filters</button
+            ><button
+              id="undo-filters"
+              type="button"
+              class="text-button"
+              disabled
+            >
+              Undo reset</button
+            ><span id="filter-feedback" role="status" aria-live="polite"></span>
+          </div>
+          <div class="favorite-preference">
+            <label
+              ><input id="remember-favorites" type="checkbox" disabled />
+              Remember favorites in this browser</label
+            >
+            <p>
+              Off by default. Favorites stay in this tab unless you choose to
+              save them.
+            </p>
+            <p id="favorite-feedback" role="status" aria-live="polite"></p>
           </div>
           <p id="view-description" class="view-description">
             The views become available after the guide loads.

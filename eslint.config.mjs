@@ -15,9 +15,10 @@ export default [
   {
     files: ['tutorial_6_api/*.js'],
     languageOptions: {
-      sourceType: 'script',
+      sourceType: 'module',
       globals: {
         document: 'readonly',
+        window: 'readonly',
         fetch: 'readonly',
         AbortController: 'readonly',
         setTimeout: 'readonly',

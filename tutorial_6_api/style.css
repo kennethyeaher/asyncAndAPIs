@@ -555,3 +555,106 @@ footer {
     opacity: 1;
   }
 }
+/* The search shelf keeps narrowing, sorting, and recovery beside the results. */
+.filter-panel {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.3fr 1.1fr;
+  gap: 14px;
+  margin-top: 24px;
+}
+.filter-panel select {
+  width: 100%;
+  min-width: 0;
+  font: inherit;
+  padding: 12px 8px;
+  background: white;
+  color: var(--ink);
+  border: 1px solid #8c9bb2;
+  border-radius: 8px;
+}
+.filter-panel select:disabled {
+  background: #eef1f6;
+}
+.filter-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin: 12px 0 20px;
+}
+.text-button {
+  color: var(--blue);
+  background: transparent;
+  border-color: var(--line);
+  font-size: 12px;
+  padding: 8px 12px;
+}
+.text-button:hover:not(:disabled) {
+  color: var(--ink);
+  background: var(--pale);
+}
+.filter-actions span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.favorite-preference {
+  padding: 16px 20px;
+  border-left: 3px solid var(--blue);
+  background: var(--pale);
+}
+.favorite-preference label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 0;
+}
+.favorite-preference input {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--blue);
+}
+.favorite-preference p {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 6px 0 0;
+}
+.favorite-preference p:empty {
+  display: none;
+}
+.favorite-button {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: transparent;
+  border-color: var(--line);
+  color: var(--ink);
+  font-size: 12px;
+}
+.favorite-button[aria-pressed='true'] {
+  background: var(--pale);
+  border-color: var(--blue);
+  color: var(--blue);
+}
+.favorite-button:hover:not(:disabled) {
+  background: var(--pale);
+  color: var(--ink);
+}
+@media (max-width: 1000px) {
+  .filter-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .filter-panel {
+    grid-template-columns: 1fr;
+  }
+}
+@media (min-width: 360px) and (max-width: 600px) {
+  .filter-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .search-field,
+  .filter-panel > div:last-child {
+    grid-column: 1 / -1;
+  }
+}

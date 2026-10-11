@@ -1,5 +1,5 @@
 // browser evaluation callbacks use the globals provided by the loaded page.
-/* global loadData, window, document, getComputedStyle */
+/* global window, document, getComputedStyle, localStorage, Storage */
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
 const { createServer } = require('node:http');
@@ -83,6 +83,13 @@ async function assertAvailability(page, disabled) {
     'map-button',
     'find-button',
     'restaurant-name',
+    'search-restaurants',
+    'cuisine-filter',
+    'neighborhood-filter',
+    'sort-restaurants',
+    'favorites-button',
+    'reset-filters',
+    'remember-favorites',
   ]) {
     assert.equal(await page.locator(`#${id}`).isDisabled(), disabled, id);
   }
@@ -120,7 +127,7 @@ test('pending request shows feedback and prevents duplicate requests', async (t)
     await page.locator('#directory').getAttribute('aria-busy'),
     'true',
   );
-  await page.evaluate(() => loadData());
+  await page.locator('#load-data-button').dispatchEvent('click');
   release();
   await page.locator('#loading-status.success').waitFor();
   assert.equal(requests, 1);
@@ -370,4 +377,244 @@ test('without JavaScript the data file stays accessible', async (t) => {
   );
   assert.equal(response.ok(), true);
   assert.equal((await response.json()).length, 8);
+});
+
+// Exercise combined discovery and recovery through visible controls.
+test('search, cuisine, neighborhood, and price views compose with fetched records', async (t) => {
+  const { page, errors } = await openGuide(t);
+  await loadGuide(page);
+  await page.locator('#search-restaurants').fill('cafe');
+  assert.deepEqual(
+    await page.locator('#restaurant-list h3').allTextContents(),
+    ['Border Café'],
+  );
+  await page.locator('#search-restaurants').fill('ramen');
+  assert.deepEqual(
+    await page.locator('#restaurant-list h3').allTextContents(),
+    ['Sakura Sushi'],
+  );
+  await page.locator('#search-restaurants').fill('');
+  await page.locator('#neighborhood-filter').selectOption('College Park');
+  await page.locator('#cuisine-filter').selectOption('Vietnamese');
+  await page.locator('#filter-button').click();
+  assert.deepEqual(
+    await page.locator('#restaurant-list h3').allTextContents(),
+    ['Pho Corner'],
+  );
+  await page.locator('#neighborhood-filter').selectOption('Downtown');
+  assert.match(
+    await page.locator('#restaurant-list').innerText(),
+    /No matching restaurants/,
+  );
+  assert.deepEqual(errors, []);
+});
+
+test('sorting changes card and name order without changing source order', async (t) => {
+  const { page } = await openGuide(t);
+  await loadGuide(page);
+  await page.locator('#sort-restaurants').selectOption('rating');
+  assert.equal(
+    await page.locator('#restaurant-list h3').first().innerText(),
+    'The Brass Elephant',
+  );
+  await page.locator('#map-button').click();
+  assert.equal(
+    await page.locator('#restaurant-list li').first().innerText(),
+    'The Brass Elephant',
+  );
+  await page.locator('#sort-restaurants').selectOption('price');
+  assert.equal(
+    await page.locator('#restaurant-list li').first().innerText(),
+    'Pho Corner',
+  );
+  await page.locator('#sort-restaurants').selectOption('source');
+  assert.deepEqual(
+    await page.locator('#restaurant-list li').allTextContents(),
+    fixture.map((restaurant) => restaurant.name),
+  );
+});
+
+test('reset and undo restore combined filters and view, then invalidate on a new edit', async (t) => {
+  const { page } = await openGuide(t);
+  await loadGuide(page);
+  await page.locator('#search-restaurants').fill('pho');
+  await page.locator('#neighborhood-filter').selectOption('College Park');
+  await page.locator('#sort-restaurants').selectOption('rating');
+  await page.locator('#filter-button').click();
+  await page.locator('#reset-filters').click();
+  assert.equal(await page.locator('#restaurant-list article').count(), 8);
+  await page.locator('#undo-filters').click();
+  assert.equal(await page.locator('#search-restaurants').inputValue(), 'pho');
+  assert.equal(
+    await page.locator('#neighborhood-filter').inputValue(),
+    'College Park',
+  );
+  assert.equal(await page.locator('#sort-restaurants').inputValue(), 'rating');
+  assert.equal(
+    await page.locator('#filter-button').getAttribute('aria-pressed'),
+    'true',
+  );
+  assert.equal(await page.locator('#restaurant-list article').count(), 1);
+  await page.locator('#reset-filters').click();
+  await page.locator('#search-restaurants').fill('sushi');
+  assert.equal(await page.locator('#undo-filters').isDisabled(), true);
+});
+
+test('favorites work without storage and removal preserves keyboard focus', async (t) => {
+  const { page } = await openGuide(t);
+  await loadGuide(page);
+  assert.equal(await page.locator('#remember-favorites').isChecked(), false);
+  await page
+    .getByRole('button', { name: 'Save Pho Corner to favorites', exact: true })
+    .click();
+  assert.equal(
+    await page.evaluate(() =>
+      localStorage.getItem('table-finder.favorites.v1'),
+    ),
+    null,
+  );
+  await page.locator('#favorites-button').click();
+  assert.deepEqual(
+    await page.locator('#restaurant-list h3').allTextContents(),
+    ['Pho Corner'],
+  );
+  const remove = page.getByRole('button', {
+    name: 'Remove Pho Corner from favorites',
+    exact: true,
+  });
+  await remove.focus();
+  await page.keyboard.press('Enter');
+  assert.match(
+    await page.locator('#restaurant-list').innerText(),
+    /shortlist is waiting/,
+  );
+  assert.equal(
+    await page
+      .locator('#favorites-button')
+      .evaluate((element) => element === document.activeElement),
+    true,
+  );
+  await page.locator('#display-button').click();
+  await page
+    .getByRole('button', { name: 'Save Pho Corner to favorites', exact: true })
+    .click();
+  await page.reload();
+  await loadGuide(page);
+  assert.equal(
+    await page.locator('#favorites-button').innerText(),
+    'Favorites (0)',
+  );
+});
+
+test('favorite storage requires opt in, restores after reload, and is removed on opt out', async (t) => {
+  const { page } = await openGuide(t);
+  await loadGuide(page);
+  await page
+    .getByRole('button', { name: 'Save Pho Corner to favorites', exact: true })
+    .click();
+  await page.locator('#remember-favorites').check();
+  await page.reload();
+  await loadGuide(page);
+  assert.equal(await page.locator('#remember-favorites').isChecked(), true);
+  await page.locator('#favorites-button').click();
+  assert.deepEqual(
+    await page.locator('#restaurant-list h3').allTextContents(),
+    ['Pho Corner'],
+  );
+  await page.locator('#remember-favorites').uncheck();
+  assert.equal(
+    await page.evaluate(() =>
+      localStorage.getItem('table-finder.favorites.v1'),
+    ),
+    null,
+  );
+  assert.equal(await page.locator('#restaurant-list article').count(), 1);
+  await page.reload();
+  await loadGuide(page);
+  assert.equal(
+    await page.locator('#favorites-button').innerText(),
+    'Favorites (0)',
+  );
+});
+
+test('blocked storage reports failure while favorites and filtering remain usable', async (t) => {
+  const { page, errors } = await openGuide(t);
+  await page.context().addInitScript(() => {
+    Object.defineProperty(window, 'localStorage', {
+      get() {
+        throw new Error('Storage blocked');
+      },
+    });
+  });
+  await page.reload();
+  await loadGuide(page);
+  await page.locator('#remember-favorites').click();
+  assert.match(
+    await page.locator('#favorite-feedback').innerText(),
+    /storage is unavailable/,
+  );
+  assert.equal(await page.locator('#remember-favorites').isChecked(), false);
+  await page
+    .getByRole('button', { name: 'Save Pho Corner to favorites', exact: true })
+    .click();
+  await page.locator('#favorites-button').click();
+  assert.equal(await page.locator('#restaurant-list article').count(), 1);
+  assert.deepEqual(errors, []);
+});
+
+test('corrupt saved favorites do not prevent data loading', async (t) => {
+  const { page, errors } = await openGuide(t);
+  await page.evaluate(() =>
+    localStorage.setItem('table-finder.favorites.v1', '{bad'),
+  );
+  await page.reload();
+  assert.match(
+    await page.locator('#favorite-feedback').innerText(),
+    /could not be read/,
+  );
+  await loadGuide(page);
+  assert.equal(await page.locator('#restaurant-list article').count(), 8);
+  assert.equal(await page.locator('#remember-favorites').isChecked(), false);
+  assert.deepEqual(errors, []);
+});
+
+test('favorite states stay synchronized between the lookup and directory', async (t) => {
+  const { page } = await openGuide(t);
+  await loadGuide(page);
+  await page.locator('#restaurant-name').fill('Pho Corner');
+  await page.locator('#find-button').click();
+  await page.locator('#found-restaurant button').click();
+  assert.equal(
+    await page
+      .locator('#restaurant-list button[data-favorite-id="5"]')
+      .getAttribute('aria-pressed'),
+    'true',
+  );
+  await page.locator('#restaurant-list button[data-favorite-id="5"]').click();
+  assert.equal(
+    await page.locator('#found-restaurant button').getAttribute('aria-pressed'),
+    'false',
+  );
+});
+
+test('a storage write failure keeps the warning and current shortlist', async (t) => {
+  const { page, errors } = await openGuide(t);
+  await loadGuide(page);
+  await page.locator('#remember-favorites').check();
+  await page.evaluate(() => {
+    Storage.prototype.setItem = () => {
+      throw new Error('Quota exceeded');
+    };
+  });
+  await page
+    .getByRole('button', { name: 'Save Pho Corner to favorites', exact: true })
+    .click();
+  assert.match(
+    await page.locator('#favorite-feedback').innerText(),
+    /storage is unavailable/,
+  );
+  assert.equal(await page.locator('#remember-favorites').isChecked(), false);
+  await page.locator('#favorites-button').click();
+  assert.equal(await page.locator('#restaurant-list article').count(), 1);
+  assert.deepEqual(errors, []);
 });
