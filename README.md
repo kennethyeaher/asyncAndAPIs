@@ -11,11 +11,13 @@
   <img alt="HTML5" src="https://img.shields.io/badge/HTML5-E34F26?style=flat-square&amp;logo=html5&amp;logoColor=white">
   <img alt="CSS" src="https://img.shields.io/badge/CSS-663399?style=flat-square&amp;logo=css&amp;logoColor=white">
   <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-B89B00?style=flat-square&amp;logo=javascript&amp;logoColor=white">
+  <a href="https://kennethyeaher.github.io/asyncAndAPIs/tutorial_6_api/"><img alt="Live demo" src="https://img.shields.io/badge/demo-live-254dba?style=flat-square"></a>
   <img alt="No runtime dependencies" src="https://img.shields.io/badge/runtime_dependencies-0-254dba?style=flat-square">
   <a href="https://github.com/kennethyeaher/asyncAndAPIs/actions/workflows/browser-checks.yml"><img alt="Browser checks" src="https://img.shields.io/github/actions/workflow/status/kennethyeaher/asyncAndAPIs/browser-checks.yml?branch=main&amp;style=flat-square&amp;label=browser%20checks"></a>
 </p>
 
 <p align="center">
+  <a href="https://kennethyeaher.github.io/asyncAndAPIs/tutorial_6_api/"><strong>Try the guide ↗</strong></a> &nbsp; · &nbsp;
   <a href="#the-interaction">The interaction</a> &nbsp; · &nbsp;
   <a href="#class-requirements">Class requirements</a> &nbsp; · &nbsp;
   <a href="#run-locally">Run locally</a> &nbsp; · &nbsp;
@@ -117,7 +119,7 @@ BROWSER_CHANNEL=chrome npm test
 
 ## Verification
 
-The suite contains 17 browser tests. Local verification uses installed Chrome; the GitHub Actions workflow is configured to run the same suite in Chromium on pushes and pull requests. The badge links to hosted results once the repository is published.
+All 17 browser tests passed locally in Chrome and in GitHub Actions using Chromium. The workflow runs on pushes and pull requests; the badge links to its latest result. The published Pages interface was also checked for successful loading, all four array methods, failed request recovery, and the root redirect.
 
 | Coverage          | Cases                                                                                                                     |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------- |
@@ -184,9 +186,9 @@ Assignment resources:
 - [MDN: await operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await)
 - [JavaScript.info: Asynchronous operations](https://javascript.info/async)
 
-**Publication status:** Prepared locally. GitHub publication and Pages activation are pending. The manual deployment workflow packages only the restaurant guide and a root redirect, preserving the submission path below.
+**Live demo:** [Open Table finder](https://kennethyeaher.github.io/asyncAndAPIs/tutorial_6_api/). The manual deployment workflow packages only the restaurant guide and a root redirect.
 
-**Planned submission URL:** `https://kennethyeaher.github.io/asyncAndAPIs/tutorial_6_api/`. Confirm the deployed page before submitting this link.
+**Submission link:** [kennethyeaher.github.io/asyncAndAPIs/tutorial_6_api/](https://kennethyeaher.github.io/asyncAndAPIs/tutorial_6_api/)
 
 ---
 
