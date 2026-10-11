@@ -1,135 +1,77 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tutorial 6: Load Real Data</title>
+    <meta name="description" content="Explore eight sample restaurants with async data loading, affordable picks, and quick name lookup. An INST630 JavaScript exercise.">
+    <title>Table finder | Restaurant guide</title>
+    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#directory">Skip to restaurants</a>
     <div class="container">
-        <header>
-            <h1>Tutorial 6: Load Real Data</h1>
-            <p>From static data to dynamic data loading from the internet</p>
-        </header>
-
-        <!-- Loading Status Section -->
-        <section class="status-section">
-            <h2>Data Loading Status</h2>
-            <div id="loading-status" class="status-display">
-                <p class="status-message">Ready to load data</p>
+      <header class="masthead">
+        <a href="./" class="brand"><span class="brand-mark" aria-hidden="true">tf.</span> Table finder</a>
+        <span class="course-label">INST630 <span aria-hidden="true">/</span> Week 6</span>
+      </header>
+      <main>
+        <section class="intro" aria-labelledby="page-title">
+          <div class="intro-copy">
+            <p class="eyebrow">The sample restaurant guide</p>
+            <h1 id="page-title">Find your<br>next <em>table.</em></h1>
+            <p class="intro-description">A quick look at the neighborhood, the menu, and what fits your budget. Load the guide to start exploring.</p>
+            <p class="sample-note">Course sample data. These are fictional listings, not current restaurant recommendations.</p>
+          </div>
+          <div class="request-card">
+            <div class="request-heading"><span class="eyebrow">Your directory</span><span aria-hidden="true">↗</span></div>
+            <div id="loading-status" class="status-display ready" role="status" aria-live="polite" aria-atomic="true">
+              <span class="status-marker" aria-hidden="true"></span>
+              <p class="status-message">Ready when you are.</p>
             </div>
-            <button id="load-data-button" class="load-button">Load Restaurant Data</button>
+            <p class="request-hint">Load once, then browse without making another request.</p>
+            <button id="load-data-button" class="load-button" type="button">Load restaurants</button>
+            <div class="request-source"><span>Source</span><a href="restaurants.json">restaurants.json</a></div>
+          </div>
         </section>
 
-        <!-- Same functionality as Tutorial 5, but with async data -->
-        
-        <!-- Method 1: forEach with loaded data -->
-        <section class="method-section">
-            <h2>Method 1: Display All Restaurants (Async Data)</h2>
-            <p>Same as Tutorial 5, but using data loaded from the internet with <code>fetch()</code>.</p>
-            
-            <div class="demo-area">
-                <button id="display-button" class="method-button" disabled>Display All Restaurants</button>
-                <div id="restaurant-list" class="result-area">
-                    <p class="placeholder">Load data first, then click to display all restaurants</p>
-                </div>
-            </div>
-            
-            <div class="explanation">
-                <p><strong>What's different:</strong> The data comes from the internet, not hardcoded in our JavaScript file.</p>
-            </div>
+        <noscript><p class="notice">JavaScript is needed to load this guide. You can still <a href="restaurants.json">open the restaurant data</a>.</p></noscript>
+
+        <section id="directory" class="directory" aria-labelledby="directory-title" aria-busy="false">
+          <div class="section-heading"><div><p class="eyebrow">A place for every appetite</p><h2 id="directory-title">The directory</h2></div><p id="result-count" role="status" aria-live="polite">No data loaded</p></div>
+          <div class="toolbar" role="group" aria-label="Restaurant views">
+            <button id="display-button" type="button" class="view-button" aria-pressed="true" disabled>All restaurants</button>
+            <button id="filter-button" type="button" class="view-button" aria-pressed="false" disabled>Affordable · $ / $$</button>
+            <button id="map-button" type="button" class="view-button" aria-pressed="false" disabled>Names only</button>
+          </div>
+          <p id="view-description" class="view-description">The views become available after the guide loads.</p>
+          <div id="restaurant-list" class="restaurant-grid"><div class="empty-state"><span class="empty-symbol" aria-hidden="true">↗</span><h3>Your next table starts here.</h3><p>Choose “Load restaurants” to open the sample guide.</p></div></div>
         </section>
 
-        <!-- Method 2: filter with loaded data -->
-        <section class="method-section">
-            <h2>Method 2: Filter Cheap Restaurants (Async Data)</h2>
-            <p>Same filtering logic, but working with data that was loaded asynchronously.</p>
-            
-            <div class="demo-area">
-                <button id="filter-button" class="method-button" disabled>Show Cheap Restaurants</button>
-                <div id="filtered-list" class="result-area">
-                    <p class="placeholder">Load data first, then click to show only affordable restaurants</p>
-                </div>
-            </div>
-            
-            <div class="explanation">
-                <p><strong>Key insight:</strong> Once data is loaded, you use the same array methods you learned in Tutorial 5.</p>
-            </div>
+        <section class="lookup" aria-labelledby="lookup-title">
+          <div><p class="eyebrow">Have a place in mind?</p><h2 id="lookup-title">Find it by name.</h2><p>Look up one restaurant with its full name. Capitalization does not matter.</p></div>
+          <div>
+            <form id="find-form">
+              <label for="restaurant-name">Restaurant name</label>
+              <div class="find-controls"><input id="restaurant-name" name="restaurant" type="text" placeholder="e.g. Pho Corner" maxlength="120" required disabled><button id="find-button" type="submit" disabled>Find restaurant</button></div>
+            </form>
+            <div id="found-restaurant" class="find-result" role="status" aria-live="polite">Load the guide to use name lookup.</div>
+          </div>
         </section>
 
-        <!-- Method 3: map with loaded data -->
-        <section class="method-section">
-            <h2>Method 3: Extract Restaurant Names (Async Data)</h2>
-            <p>Same data transformation, but the source data came from a network request.</p>
-            
-            <div class="demo-area">
-                <button id="map-button" class="method-button" disabled>Show Restaurant Names</button>
-                <div id="mapped-list" class="result-area">
-                    <p class="placeholder">Load data first, then click to show just the restaurant names</p>
-                </div>
-            </div>
-            
-            <div class="explanation">
-                <p><strong>Real-world pattern:</strong> Load data → Transform data → Display data</p>
-            </div>
-        </section>
-
-        <!-- Error Handling Demo -->
-        <section class="method-section error-demo">
-            <h2>Error Handling Demo</h2>
-            <p>See what happens when data loading fails. This button tries to load from a broken URL.</p>
-            
-            <div class="demo-area">
-                <button id="error-button" class="error-button">Try Loading Bad Data</button>
-                <div id="error-display" class="result-area">
-                    <p class="placeholder">Click to see error handling in action</p>
-                </div>
-            </div>
-            
-            <div class="explanation">
-                <p><strong>Important:</strong> Always handle errors gracefully. Users should see helpful messages, not broken interfaces.</p>
-            </div>
-        </section>
-
-        <!-- Tutorial Instructions -->
-        <section class="tutorial-instructions">
-            <h2>Your Tasks</h2>
-            <ol>
-                <li><strong>Data Loading:</strong> Use <code>fetch()</code> to load restaurant data from "restaurants.json"</li>
-                <li><strong>Loading States:</strong> Show "Loading..." while waiting for data</li>
-                <li><strong>Error Handling:</strong> Show user-friendly error messages when loading fails</li>
-                <li><strong>Apply Array Methods:</strong> Once data loads, use Tutorial 5's methods on the loaded data</li>
-            </ol>
-            
-            <h3>Async/Await Skills to Practice:</h3>
-            <ul>
-                <li><code>async function loadData()</code> - mark functions as asynchronous</li>
-                <li><code>await fetch('restaurants.json')</code> - wait for network request</li>
-                <li><code>await response.json()</code> - wait for JSON parsing</li>
-                <li><code>try/catch</code> blocks for error handling</li>
-                <li>Loading state management (show/hide loading messages)</li>
-            </ul>
-            
-            <h3>Key Pattern: Async Data Loading</h3>
-            <ul>
-                <li><strong>Start:</strong> Show loading state</li>
-                <li><strong>Load:</strong> Use <code>fetch()</code> to get data from URL</li>
-                <li><strong>Success:</strong> Hide loading, enable buttons, store data</li>
-                <li><strong>Error:</strong> Hide loading, show error message</li>
-                <li><strong>Use:</strong> Apply Tutorial 5's array methods to loaded data</li>
-            </ul>
-            
-            <h3>Why Async/Await is Better Than Promises:</h3>
-            <ul>
-                <li><strong>Cleaner code:</strong> <code>await fetch()</code> vs <code>fetch().then()</code> chains</li>
-                <li><strong>Error handling:</strong> Use familiar <code>try/catch</code> instead of <code>.catch()</code></li>
-                <li><strong>Debugging:</strong> Easier to follow the flow of async code</li>
-                <li><strong>Reading:</strong> Looks more like regular JavaScript</li>
-            </ul>
-        </section>
+        <details class="testing-panel">
+          <summary>Behind the guide <span>Async workflow &amp; error recovery</span></summary>
+          <div class="testing-content">
+            <h2>Try the recovery flow</h2>
+            <p>This exercise loads a JSON file with <code>fetch()</code> and <code>async/await</code>. The loaded array powers <code>forEach</code>, <code>filter</code>, <code>map</code>, and <code>find</code>.</p>
+            <p>The button below requests a missing file through the same loading workflow. It clears the current results and disables browsing. Use the retry button above to load the correct file again.</p>
+            <button id="error-button" class="secondary-button" type="button">Test a failed request</button>
+            <p>For a real network failure, block <code>restaurants.json</code> in browser developer tools, then reload the guide. Remove the block before retrying.</p>
+          </div>
+        </details>
+      </main>
+      <footer><span>Table finder <span aria-hidden="true">·</span> Kenneth Yeaher</span><span>Built with HTML, CSS &amp; JavaScript</span></footer>
     </div>
-
-    <script src="script.js"></script>
-</body>
+  </body>
 </html>

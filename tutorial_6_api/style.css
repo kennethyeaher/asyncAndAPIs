@@ -1,409 +1,126 @@
-/* =====================================================
-   TUTORIAL 6: LOAD REAL DATA
-   Consistent styling with previous tutorials + async states
-   ===================================================== */
-
-/* ROOT VARIABLES */
+/* The directory uses a blue field and menu style dividers to separate browsing from loading. */
 :root {
-    --primary-color: #007cba;
-    --secondary-color: #28a745;
-    --warning-color: #ffc107;
-    --error-color: #dc3545;
-    --background-color: #f8f9fa;
-    --card-background: #ffffff;
-    --text-color: #333;
-    --border-color: #ddd;
-    --shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
-    --border-radius: 0.5rem;
-    --spacing-sm: 0.5rem;
-    --spacing-md: 1rem;
-    --spacing-lg: 1.5rem;
-    --spacing-xl: 2rem;
+  color-scheme: light;
+  --ink: #172b48;
+  --muted: #536479;
+  --blue: #254dba;
+  --pale: #edf2ff;
+  --paper: #fbfcff;
+  --line: #d5ddeb;
+  --accent: #f9ce5b;
+  --error: #9e2929;
 }
-
-/* BASE STYLES */
-* {
-    box-sizing: border-box;
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.6 "Avenir Next", Avenir, "Segoe UI", sans-serif; }
+button, input { font: inherit; }
+button, a, input, summary { -webkit-tap-highlight-color: transparent; }
+a { color: var(--blue); text-underline-offset: 4px; }
+button { cursor: pointer; border: 1px solid transparent; border-radius: 8px; padding: 12px 20px; background: var(--blue); color: white; font-weight: 600; line-height: 1.4; }
+button:hover:not(:disabled) { background: #1b3b93; }
+button:disabled { cursor: not-allowed; opacity: .5; }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; }
+.container { max-width: 1180px; padding: 0 40px; margin: auto; }
+.skip-link { position: absolute; top: 8px; left: 8px; padding: 8px; background: white; z-index: 2; transform: translateY(-150%); }
+.skip-link:focus { transform: translateY(0); }
+.masthead { display: flex; justify-content: space-between; align-items: center; padding: 26px 0; border-bottom: 1px solid var(--line); gap: 20px; }
+.brand { display: flex; align-items: center; gap: 12px; color: var(--ink); text-decoration: none; font-weight: 700; }
+.brand-mark { display: grid; place-items: center; width: 43px; height: 43px; border-radius: 50%; background: var(--blue); color: white; font: bold 23px Georgia, serif; }
+.course-label { color: var(--muted); font-size: 13px; }
+.course-label span { margin: 0 10px; }
+.intro { display: grid; grid-template-columns: 1.4fr 1fr; gap: 80px; align-items: center; padding: 64px 0 58px; }
+.eyebrow { margin: 0 0 12px; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+h1 { font-size: clamp(52px, 6.5vw, 88px); letter-spacing: -.065em; line-height: 1.02; margin: 0 0 24px; font-weight: 600; }
+h1 em { font-family: Georgia, serif; font-weight: 400; color: var(--blue); letter-spacing: -.06em; }
+.intro-description { max-width: 420px; color: var(--muted); font-size: 18px; }
+.sample-note { color: var(--muted); font-size: 12px; max-width: 370px; margin-top: 24px; }
+.request-card { border: 1px solid var(--line); background: var(--pale); border-radius: 16px; padding: 26px; position: relative; }
+.request-heading { display: flex; justify-content: space-between; border-bottom: 1px solid #c6d2f1; padding-bottom: 14px; }
+.request-heading .eyebrow { margin: 0; }
+.request-heading > span:last-child { font-size: 22px; line-height: 1; }
+.status-display { display: flex; gap: 12px; align-items: center; min-height: 98px; padding: 14px 0 0; }
+.status-message { font-size: 22px; font-weight: 600; line-height: 1.35; margin: 0; overflow-wrap: anywhere; }
+.status-marker { width: 14px; height: 14px; border: 2px solid var(--blue); border-radius: 50%; flex: 0 0 auto; }
+.success .status-marker { background: var(--blue); }
+.error { color: var(--error); }
+.error .status-marker { border-color: var(--error); border-radius: 2px; }
+.loading .status-marker { border-top-color: transparent; animation: spin .8s linear infinite; }
+.request-hint { color: var(--muted); font-size: 13px; margin: 14px 0 22px; }
+.load-button { width: 100%; }
+.request-source { display: flex; justify-content: space-between; gap: 12px; margin-top: 20px; font-size: 12px; color: var(--muted); }
+.request-source a { color: var(--ink); }
+h2 { font-size: 29px; letter-spacing: -.035em; line-height: 1.2; margin: 0; }
+.directory { border-top: 1px solid var(--line); padding: 36px 0; }
+.section-heading { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 24px; }
+.section-heading .eyebrow { color: var(--muted); }
+#result-count { color: var(--muted); font-size: 13px; margin: 0; }
+.toolbar { display: flex; gap: 10px; flex-wrap: wrap; }
+.view-button { color: var(--ink); background: transparent; border-color: var(--line); font-size: 14px; }
+.view-button[aria-pressed="true"] { background: var(--ink); color: white; border-color: var(--ink); }
+.view-button:hover:not(:disabled) { background: var(--pale); color: var(--ink); }
+.view-description { font-size: 13px; color: var(--muted); margin: 16px 0 24px; }
+.restaurant-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.restaurant-card { min-width: 0; background: white; border: 1px solid var(--line); border-radius: 12px; padding: 24px; overflow-wrap: anywhere; }
+.restaurant-card .cuisine { font-size: 11px; letter-spacing: .09em; text-transform: uppercase; font-weight: 700; color: var(--blue); margin: 0 0 13px; }
+.restaurant-card h3 { font: 24px/1.25 Georgia, serif; margin: 0 0 16px; }
+.restaurant-card p { color: var(--muted); font-size: 13px; margin: 8px 0; }
+.restaurant-card .restaurant-meta { color: var(--ink); font-weight: 600; border-top: 1px solid var(--line); padding-top: 16px; }
+.restaurant-card .phone { margin-top: 18px; }
+.empty-state { grid-column: 1 / -1; background: var(--pale); text-align: center; border-radius: 12px; padding: 40px 20px; }
+.empty-symbol { display: inline-grid; place-items: center; width: 44px; height: 44px; background: var(--accent); border-radius: 50%; font-size: 23px; }
+.empty-state h3 { font-size: 21px; margin: 15px 0 6px; }
+.empty-state p { color: var(--muted); font-size: 14px; margin: 0; }
+.name-list { grid-column: 1 / -1; list-style: decimal-leading-zero; margin: 0; padding: 0 0 0 45px; width: 100%; }
+.name-list li { border-bottom: 1px solid var(--line); padding: 15px 12px; font: 23px/1.4 Georgia, serif; }
+.name-list li::marker { color: var(--blue); font: 12px "Segoe UI", sans-serif; }
+.lookup { display: grid; grid-template-columns: 1fr 1.4fr; gap: 60px; padding: 34px 0 44px; border-top: 1px solid var(--line); }
+.lookup > div > p:last-child { color: var(--muted); font-size: 14px; }
+label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 8px; }
+.find-controls { display: flex; gap: 10px; }
+input { min-width: 0; width: 100%; border: 1px solid #8c9bb2; border-radius: 8px; padding: 12px; color: var(--ink); background: white; }
+input:disabled { background: #eef1f6; }
+.find-controls button { flex-shrink: 0; font-size: 14px; }
+.find-result { color: var(--muted); font-size: 13px; margin-top: 16px; }
+.find-result .restaurant-card { margin-top: 12px; }
+.testing-panel { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+summary { cursor: pointer; padding: 24px 0; font-weight: 600; }
+summary span { color: var(--muted); font-weight: 400; font-size: 12px; margin-left: 14px; }
+.testing-content { max-width: 720px; padding: 0 0 30px; font-size: 14px; color: var(--muted); }
+.testing-content h2 { font-size: 22px; color: var(--ink); }
+code { font-size: .95em; color: var(--ink); }
+.secondary-button { background: transparent; color: var(--ink); border-color: var(--ink); }
+.secondary-button:hover:not(:disabled) { background: var(--pale); }
+.notice { padding: 18px; border: 1px solid var(--line); }
+footer { display: flex; justify-content: space-between; gap: 20px; color: var(--muted); font-size: 11px; padding: 28px 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+/* Reflow the guide without clipping the controls or restaurant names. */
+@media (max-width: 850px) {
+  .intro { gap: 32px; }
+  .restaurant-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lookup { grid-template-columns: 1fr; gap: 16px; }
 }
-
-body {
-    font-family: system-ui, -apple-system, sans-serif;
-    margin: 0;
-    padding: var(--spacing-md);
-    background: var(--background-color);
-    color: var(--text-color);
-    line-height: 1.6;
+@media (max-width: 600px) {
+  .container { padding: 0 20px; }
+  .masthead { padding: 20px 0; }
+  .course-label { font-size: 11px; }
+  .course-label span { margin: 0 4px; }
+  .brand { font-size: 14px; gap: 8px; }
+  .intro { grid-template-columns: 1fr; padding: 36px 0; gap: 26px; }
+  h1 { font-size: 64px; }
+  .intro-description { font-size: 16px; }
+  .sample-note { margin-top: 16px; }
+  .request-card { padding: 22px; }
+  .status-display { min-height: 78px; }
+  .section-heading { align-items: start; flex-direction: column; gap: 12px; }
+  .toolbar { gap: 8px; }
+  .view-button { font-size: 12px; padding: 10px 12px; }
+  .restaurant-grid { grid-template-columns: 1fr; }
+  .find-controls { flex-direction: column; }
+  summary span { display: block; margin: 4px 0 0 17px; }
+  footer { flex-direction: column; gap: 6px; }
 }
-
-.container {
-    max-width: 50rem;
-    margin: 0 auto;
-}
-
-/* HEADER */
-header {
-    text-align: center;
-    margin-bottom: var(--spacing-xl);
-    padding: var(--spacing-xl);
-    background: var(--card-background);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-}
-
-header h1 {
-    color: var(--primary-color);
-    margin-bottom: var(--spacing-sm);
-}
-
-header p {
-    color: #666;
-    font-size: 1.1rem;
-    margin: 0;
-}
-
-/* STATUS SECTION - New for Tutorial 6 */
-.status-section {
-    background: var(--card-background);
-    margin-bottom: var(--spacing-lg);
-    padding: var(--spacing-xl);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-    border-left: 0.25rem solid var(--warning-color);
-}
-
-.status-section h2 {
-    color: var(--warning-color);
-    margin-top: 0;
-    margin-bottom: var(--spacing-md);
-}
-
-.status-display {
-    background: #fff3cd;
-    border: 2px solid var(--warning-color);
-    border-radius: var(--border-radius);
-    padding: var(--spacing-md);
-    margin-bottom: var(--spacing-md);
-    text-align: center;
-}
-
-.status-message {
-    margin: 0;
-    font-weight: bold;
-    color: #856404;
-}
-
-/* LOADING STATES */
-.status-display.loading {
-    background: #cce7ff;
-    border-color: var(--primary-color);
-    animation: pulse 1.5s ease-in-out infinite;
-}
-
-.status-display.loading .status-message {
-    color: var(--primary-color);
-}
-
-.status-display.success {
-    background: #d4edda;
-    border-color: var(--secondary-color);
-}
-
-.status-display.success .status-message {
-    color: #155724;
-}
-
-.status-display.error {
-    background: #f8d7da;
-    border-color: var(--error-color);
-}
-
-.status-display.error .status-message {
-    color: #721c24;
-}
-
-/* PULSE ANIMATION FOR LOADING */
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.7; }
-    100% { opacity: 1; }
-}
-
-/* LOAD BUTTON */
-.load-button {
-    background: var(--warning-color);
-    color: #212529;
-    border: none;
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: bold;
-    transition: all 0.2s ease;
-    display: block;
-    width: 100%;
-}
-
-.load-button:hover {
-    background: #e0a800;
-    transform: translateY(-1px);
-}
-
-.load-button:disabled {
-    background: #6c757d;
-    cursor: not-allowed;
-    transform: none;
-}
-
-/* METHOD SECTIONS - Same as Tutorial 5 */
-.method-section {
-    background: var(--card-background);
-    margin-bottom: var(--spacing-lg);
-    padding: var(--spacing-xl);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-    border-left: 0.25rem solid var(--primary-color);
-}
-
-.method-section.error-demo {
-    border-left-color: var(--error-color);
-}
-
-.method-section h2 {
-    color: var(--primary-color);
-    margin-top: 0;
-    margin-bottom: var(--spacing-sm);
-}
-
-.method-section.error-demo h2 {
-    color: var(--error-color);
-}
-
-.method-section p {
-    margin-bottom: var(--spacing-lg);
-    color: #666;
-}
-
-.method-section code {
-    background: #f8f9fa;
-    padding: 0.125rem 0.25rem;
-    border-radius: 0.25rem;
-    font-family: 'Courier New', monospace;
-    font-size: 0.875rem;
-    color: var(--primary-color);
-}
-
-/* DEMO AREAS */
-.demo-area {
-    background: #f8f9fa;
-    padding: var(--spacing-lg);
-    border-radius: var(--border-radius);
-    border: 2px dashed var(--border-color);
-    margin-bottom: var(--spacing-md);
-}
-
-/* BUTTONS */
-.method-button {
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: bold;
-    transition: all 0.2s ease;
-    display: block;
-    margin-bottom: var(--spacing-md);
-}
-
-.method-button:hover:not(:disabled) {
-    background: #005a87;
-    transform: translateY(-1px);
-}
-
-.method-button:focus {
-    outline: 2px solid var(--secondary-color);
-    outline-offset: 2px;
-}
-
-.method-button:disabled {
-    background: #6c757d;
-    cursor: not-allowed;
-    transform: none;
-    opacity: 0.6;
-}
-
-.error-button {
-    background: var(--error-color);
-    color: white;
-    border: none;
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: bold;
-    transition: all 0.2s ease;
-    display: block;
-    margin-bottom: var(--spacing-md);
-}
-
-.error-button:hover {
-    background: #c82333;
-    transform: translateY(-1px);
-}
-
-/* RESULT AREAS - Same as Tutorial 5 */
-.result-area {
-    background: white;
-    border: 2px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: var(--spacing-md);
-    min-height: 6rem;
-    max-height: 20rem;
-    overflow-y: auto;
-}
-
-.placeholder {
-    color: #666;
-    font-style: italic;
-    text-align: center;
-    margin: var(--spacing-md) 0;
-}
-
-/* RESULT CONTENT STYLING - Same as Tutorial 5 */
-.restaurant-item {
-    padding: var(--spacing-sm);
-    border-bottom: 1px solid #eee;
-    margin-bottom: var(--spacing-sm);
-}
-
-.restaurant-item:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-}
-
-.restaurant-name {
-    font-weight: bold;
-    color: var(--primary-color);
-}
-
-.restaurant-cuisine {
-    color: #666;
-    font-size: 0.9rem;
-}
-
-.restaurant-rating {
-    color: var(--secondary-color);
-    font-weight: bold;
-}
-
-.restaurant-price {
-    background: #fff3cd;
-    padding: 0.125rem 0.25rem;
-    border-radius: 0.25rem;
-    font-size: 0.8rem;
-    color: #856404;
-    display: inline-block;
-}
-
-/* LIST STYLES FOR MAP RESULTS */
-.name-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.name-list li {
-    padding: var(--spacing-sm);
-    border-bottom: 1px solid #eee;
-    transition: background-color 0.2s;
-}
-
-.name-list li:hover {
-    background: #f8f9fa;
-}
-
-.name-list li:last-child {
-    border-bottom: none;
-}
-
-/* ERROR DISPLAY STYLES */
-.error-message {
-    background: #f8d7da;
-    color: #721c24;
-    padding: var(--spacing-md);
-    border-radius: var(--border-radius);
-    border: 1px solid #f5c6cb;
-    text-align: center;
-}
-
-/* EXPLANATIONS */
-.explanation {
-    background: #e8f5e8;
-    padding: var(--spacing-md);
-    border-radius: var(--border-radius);
-    border-left: 0.25rem solid var(--secondary-color);
-}
-
-.explanation p {
-    margin: 0;
-    font-style: italic;
-    color: #155724;
-}
-
-/* TUTORIAL INSTRUCTIONS */
-.tutorial-instructions {
-    background: white;
-    padding: var(--spacing-xl);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-    border-left: 0.25rem solid var(--secondary-color);
-}
-
-.tutorial-instructions h2 {
-    color: var(--secondary-color);
-    margin-top: 0;
-}
-
-.tutorial-instructions h3 {
-    color: var(--primary-color);
-    margin-top: var(--spacing-lg);
-    margin-bottom: var(--spacing-sm);
-}
-
-.tutorial-instructions code {
-    background: #f8f9fa;
-    padding: 0.125rem 0.25rem;
-    border-radius: 0.25rem;
-    font-family: 'Courier New', monospace;
-    font-size: 0.875rem;
-    color: var(--primary-color);
-}
-
-.tutorial-instructions ol li {
-    margin-bottom: var(--spacing-sm);
-}
-
-.tutorial-instructions ul li {
-    margin-bottom: 0.25rem;
-}
-
-/* RESPONSIVE DESIGN */
-@media (max-width: 48rem) {
-    .container {
-        padding: var(--spacing-sm);
-    }
-    
-    .method-section,
-    .status-section {
-        padding: var(--spacing-md);
-    }
-    
-    .demo-area {
-        padding: var(--spacing-md);
-    }
-    
-    .result-area {
-        max-height: 15rem;
-    }
+@media (prefers-reduced-motion: reduce) { .loading .status-marker { animation: none; border-style: dotted; } }
+@media (forced-colors: active) {
+  button, .request-card, .restaurant-card, .empty-state { border: 1px solid CanvasText; }
+  .view-button[aria-pressed="true"] { border: 3px solid Highlight; }
+  button:disabled { color: GrayText; opacity: 1; }
 }
