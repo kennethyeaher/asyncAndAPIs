@@ -168,7 +168,7 @@ asyncAndAPIs/
 │   └── restaurants.json        # supplied course fixture
 ├── tests/restaurants.test.cjs   # browser behavior and failure checks
 ├── docs/assets/                 # banner and actual interface screenshots
-├── .github/workflows/           # repeatable browser checks
+├── .github/workflows/           # browser checks and manual Pages deployment
 ├── eslint.config.mjs            # JavaScript lint rules
 └── package.json                 # development commands and dependencies
 ```
@@ -184,7 +184,7 @@ Assignment resources:
 - [MDN: await operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await)
 - [JavaScript.info: Asynchronous operations](https://javascript.info/async)
 
-**Publication status:** Prepared locally. GitHub publication and Pages activation are pending.
+**Publication status:** Prepared locally. GitHub publication and Pages activation are pending. The manual deployment workflow packages only the restaurant guide and a root redirect, preserving the submission path below.
 
 **Planned submission URL:** `https://kennethyeaher.github.io/asyncAndAPIs/tutorial_6_api/`. Confirm the deployed page before submitting this link.
 

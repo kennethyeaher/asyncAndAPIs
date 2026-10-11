@@ -16,10 +16,16 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Prepare the site
+        run: |
+          mkdir -p _site
+          cp -R tutorial_6_api _site/tutorial_6_api
+          printf '%s\n' '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=tutorial_6_api/"><title>Table finder</title></head><body><a href="tutorial_6_api/">Open the restaurant guide</a></body></html>' > _site/index.html
+          touch _site/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: tutorial_6_api
+          path: _site
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
